@@ -17,6 +17,6 @@ $audio_match = array('m4a', 'mp3', 'flac', 'wma');
 
 $permissions = 0777;
 
-$debug = true;
+$debug = false;
 
-$prod = false;
+$prod = true;

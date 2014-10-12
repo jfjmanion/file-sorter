@@ -24,11 +24,12 @@ class videoFile
 
     $pathinfo = pathinfo($filepath);
     $this->file_location = $pathinfo['dirname'] . "/";
+    $this->filename = $pathinfo['filename'] . "." . $pathinfo['extension'];
     //in case the file has spaces instead of periods
-    $this->filename = str_replace(" ", ".", $pathinfo['filename'] . "." . $pathinfo['extension']);
+    $fixed_filename = str_replace(" ", ".", $pathinfo['filename'] . "." . $pathinfo['extension']);
     $this->file_extension = $pathinfo['extension'];
 
-    $result = preg_match('.S[0-9]{1,2}E([0-9]{1,2}).', $this->filename, $matches);
+    $result = preg_match('.S[0-9]{1,2}E([0-9]{1,2}).', $fixed_filename, $matches);
     if ($result === 1) {
         $temp = explode('E', $matches[0]);
 
