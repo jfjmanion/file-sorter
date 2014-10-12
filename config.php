@@ -9,7 +9,7 @@ $movies_dir = './movies/';
 
 $music_dir = './music/';
 //$scanning_dir = '/media/seagate/Downloads/ToMove/';
-$scanning_dir = 'tomove/';
+$scanning_dir = './files_to_move/';
 
 $video_match = array('mkv', 'avi', 'mp4');
 
