@@ -18,12 +18,16 @@ class videoFile
 
   private $file_extension;
 
+  private $video_quality;
+
   function __construct ($filepath){
+
     $pathinfo = pathinfo($filepath);
     $this->file_location = $pathinfo['dirname'] . "/";
-    $this->filename = $pathinfo['filename'] . "." . $pathinfo['extension'];
+    //in case the file has spaces instead of periods
+    $this->filename = str_replace(" ", ".", $pathinfo['filename'] . "." . $pathinfo['extension']);
     $this->file_extension = $pathinfo['extension'];
-    //echo $this->filename . "<br>";
+
     $result = preg_match('.S[0-9]{1,2}E([0-9]{1,2}).', $this->filename, $matches);
     if ($result === 1) {
         $temp = explode('E', $matches[0]);
@@ -39,13 +43,15 @@ class videoFile
     } else {
       $this->is_series = false;
     }
-/*
-echo "Filename: ".$filepath. "<br>";
-echo "Mime type: ".mime_content_type($filepath) . "<br><br>";
-  */
+
+  $getID3 = new getID3;
+  $ThisFileInfo = $getID3->analyze($filepath);
+  $this->video_quality =  $ThisFileInfo['video']['resolution_y'];
+}
+
+  function get_video_quality(){
+    return $this->video_quality;
   }
-
-
   function get_filename(){
     return $this->filename;
   }

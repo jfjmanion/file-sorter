@@ -16,7 +16,9 @@ class audioFile
 
   private $file_extension;
 
-  function __construct ($filepath){
+  private $tracknumber;
+
+  public function __construct ($filepath){
     $pathinfo = pathinfo($filepath);
     $this->file_location = $pathinfo['dirname'] . "/";
     $this->filename = $pathinfo['filename'] . "." . $pathinfo['extension'];
@@ -29,48 +31,46 @@ class audioFile
     $audio_pathinfo = pathinfo($audio);
     $extension = $audio_pathinfo['extension'];
 
+    $tracknumber = $ThisFileInfo['comments']['tracknumber'][0];
+    $this->tracknumber = (!empty($tracknumber)) ? $tracknumber : $ThisFileInfo['comments']['track'][0];
+
     $this->artist = $ThisFileInfo['comments']['artist'][0];
     $this->album_year = $ThisFileInfo['comments']['year'][0];
     $this->album = $ThisFileInfo['comments']['album'][0];
     $this->title = $ThisFileInfo['comments']['title'][0];
+
     unset($ThisFileInfo);
 
   }
 
-  function getArtist(){
+  public function getArtist(){
     return $this->artist;
   }
 
-  function getAlbumYear(){
+  public function getAlbumYear(){
     return $this->album_year;
   }
 
-  function getAlbum(){
+  public function getAlbum(){
     return $this->album;
   }
 
-  function getExtension(){
+  public function getExtension(){
     return $this->file_extension;
   }
 
-  function getFileLocation(){
+  public function getFileLocation(){
     return $this->file_location;
   }
-  function getFileName(){
+  public function getFileName(){
     return $this->filename;
   }
 
-  function getTitle(){
+  public function getTitle(){
     return $this->title;
   }
 
-
-
-
-
-
-
-
-
-
+  public function getTrackNumber(){
+    return $this->tracknumber;
+  }
 }

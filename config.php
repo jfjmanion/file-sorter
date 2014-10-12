@@ -19,4 +19,4 @@ $permissions = 0777;
 
 $debug = true;
 
-$prod = true;
+$prod = false;

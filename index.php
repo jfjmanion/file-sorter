@@ -27,7 +27,7 @@ foreach ($videos as $video){
   if ($video->is_series()) {
     $directory = $series_dir . $video->get_series() . '/Season ' . $video->get_season() . '/';
 
-    $video_location = $directory . "Episode " . $video->get_episode().".".$video->get_file_extension();
+    $video_location = $directory . "Episode " . $video->get_episode() . " (" .$video->get_video_quality() . "p).".$video->get_file_extension();
 
     if ($debug){
       echo "Series: ". $video->get_series() . "<Br>";
@@ -58,9 +58,11 @@ foreach ($audios as $audio){
   $year = (!empty($year)) ? " (" . $year . ")" : "";
   $album = $audio->getAlbum();
   $album = (!empty($album)) ? $album . $year . "/" : "";
+  $tracknumber = $audio->getTrackNumber();
+  $tracknumber = (!empty($tracknumber)) ? $tracknumber . " - " : "";
 
   $directory = $music_dir . $artist . $album;
-  $filename = $audio->getTitle() . "." . $audio->getExtension();
+  $filename = $tracknumber . $audio->getTitle() . "." . $audio->getExtension();
   $new_location = $directory . $filename;
 
   if (!file_exists($new_location) && $prod){
