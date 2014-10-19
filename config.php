@@ -21,4 +21,8 @@ $permissions = 0777;
 
 $debug = true;
 
-$prod = false;
+$prod = true;
+
+$lock_file = "./lock";
+
+$ignore_files = array('txt', 'nfo', 'jpg', 'DS_Store', 'm3u', 'log');

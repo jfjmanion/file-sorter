@@ -8,6 +8,8 @@ require_once('./audioFile.php');
 $videos = array();
 $audios = array();
 $others = array();
+$directories = array();
+$lock_flag = false;
 
 //get all of the files in the Completed folder and generate classes
 $objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($scanning_dir), RecursiveIteratorIterator::SELF_FIRST);
@@ -45,16 +47,18 @@ foreach ($videos as $video){
     $video_location = $directory . $video->get_filename();
   }
 
-if ($prod){
-  //if it already exists, just delete it
-  if (!file_exists($video_location)){
-    @mkdir($directory, $permissions, true);
-    copy($video->get_file_location().$video->get_filename(), $video_location );
-    unlink($video->get_file_location().$video->get_filename());
-  } else {
-    unlink($video->get_file_location().$video->get_filename());
+  if ($prod && !file_exists($lock_file)){
+    //if it already exists, just delete it
+    if (!file_exists($video_location)){
+      @mkdir($directory, $permissions, true);
+      copy($video->get_file_location().$video->get_filename(), $video_location );
+      unlink($video->get_file_location().$video->get_filename());
+    } else {
+      unlink($video->get_file_location().$video->get_filename());
+    }
+  } else{
+    $lock_flag = true;
   }
-}
 }
 
 foreach ($audios as $audio){
@@ -72,7 +76,7 @@ foreach ($audios as $audio){
   $filename = $tracknumber . $audio->getTitle() . "." . $audio->getExtension();
   $new_location = $directory . $filename;
 
-  if ($prod){
+  if ($prod && !file_exists($lock_file)){
     if (!file_exists($new_location)){
       @mkdir($directory, $permissions, true);
       copy($audio->getFileLocation().$audio->getFileName(), $new_location);
@@ -80,7 +84,10 @@ foreach ($audios as $audio){
     } else {
       unlink($audio->getFileLocation() . $audio->getFileName());
     }
+  } else {
+    $lock_flag = true;
   }
+
   if ($debug){
   echo "old file location: " . $audio->getFileLocation(). $audio->getFileName() . "<br>";
   echo "New file location: " . $new_location . "<br><br>";
@@ -89,15 +96,21 @@ foreach ($audios as $audio){
 
 foreach ($others as $other){
   //move them into an new "Other to sort" folder
+  $pathinfo = pathinfo($other);
+
   if ($debug){
     echo "Copy Other File: " . $other . "<br>";
     echo "To : " . $manual_sort . $pathinfo['filename'] . "." . $pathinfo['extension'] . "<br><br>";
   }
 
-  if ($prod){
-    $pathinfo = pathinfo($other);
-    copy($other, $manual_sort . $pathinfo['filename'] . "." . $pathinfo['extension']);
+  if ($prod && !file_exists($lock_file)){
+    //if its a sample or the extension is ignore, just remove it
+    if (!in_array($pathinfo['extension'], $ignore_files) && strpos($pathinfo['filename'], 'sample') === false){
+      copy($other, $manual_sort . $pathinfo['filename'] . "." . $pathinfo['extension']);
+    }
     unlink($other);
+  } else {
+    $lock_flag = true;
   }
 }
 
@@ -107,7 +120,7 @@ foreach($directories as $directory){
     echo "Directory to delete: " . $directory . "<br>";
   }
 
-  if ($prod){
+  if ($prod && $lock_flag === false){
     @rmdir($directory);
   }
 
