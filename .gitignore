@@ -17,3 +17,4 @@ manual_sort/
 files_to_move*/
 movies/
 composer.lock
+.sh
