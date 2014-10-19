@@ -8,6 +8,8 @@ $series_dir = './series/';
 $movies_dir = './movies/';
 
 $music_dir = './music/';
+
+$manual_sort = './manual_sort/';
 //$scanning_dir = '/media/seagate/Downloads/ToMove/';
 $scanning_dir = './files_to_move/';
 
@@ -17,6 +19,6 @@ $audio_match = array('m4a', 'mp3', 'flac', 'wma');
 
 $permissions = 0777;
 
-$debug = false;
+$debug = true;
 
-$prod = true;
+$prod = false;

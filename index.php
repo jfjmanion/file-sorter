@@ -17,8 +17,10 @@ foreach($objects as $name => $object){
       $videos[] = new videoFile($name);
     } else if (in_array($pathinfo['extension'], $audio_match)) {
       $audios[] = new audioFile($name);
-    } else {
+    } else if (!is_dir($name)){
       $others[] = $name;
+    } else {
+      $directories[] = $name;
     }
 }
 
@@ -43,11 +45,16 @@ foreach ($videos as $video){
     $video_location = $directory . $video->get_filename();
   }
 
-  if (!file_exists($video_location) && $prod){
-    //make the directory
+if ($prod){
+  //if it already exists, just delete it
+  if (!file_exists($video_location)){
     @mkdir($directory, $permissions, true);
     copy($video->get_file_location().$video->get_filename(), $video_location );
+    unlink($video->get_file_location().$video->get_filename());
+  } else {
+    unlink($video->get_file_location().$video->get_filename());
   }
+}
 }
 
 foreach ($audios as $audio){
@@ -65,12 +72,43 @@ foreach ($audios as $audio){
   $filename = $tracknumber . $audio->getTitle() . "." . $audio->getExtension();
   $new_location = $directory . $filename;
 
-  if (!file_exists($new_location) && $prod){
-    @mkdir($directory, $permissions, true);
-    copy($audio->getFileLocation().$audio->getFileName(), $new_location);
+  if ($prod){
+    if (!file_exists($new_location)){
+      @mkdir($directory, $permissions, true);
+      copy($audio->getFileLocation().$audio->getFileName(), $new_location);
+      unlink($audio->getFileLocation() . $audio->getFileName());
+    } else {
+      unlink($audio->getFileLocation() . $audio->getFileName());
+    }
   }
   if ($debug){
   echo "old file location: " . $audio->getFileLocation(). $audio->getFileName() . "<br>";
   echo "New file location: " . $new_location . "<br><br>";
   }
+}
+
+foreach ($others as $other){
+  //move them into an new "Other to sort" folder
+  if ($debug){
+    echo "Copy Other File: " . $other . "<br>";
+    echo "To : " . $manual_sort . $pathinfo['filename'] . "." . $pathinfo['extension'] . "<br><br>";
+  }
+
+  if ($prod){
+    $pathinfo = pathinfo($other);
+    copy($other, $manual_sort . $pathinfo['filename'] . "." . $pathinfo['extension']);
+    unlink($other);
+  }
+}
+
+$directories = array_reverse($directories);
+foreach($directories as $directory){
+  if ($debug) {
+    echo "Directory to delete: " . $directory . "<br>";
+  }
+
+  if ($prod){
+    @rmdir($directory);
+  }
+
 }
