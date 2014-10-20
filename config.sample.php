@@ -1,8 +1,5 @@
 <?php
-//$flexget_config = '/home/jason/config.yml';
-$flexget_config = './config.yml';
 
-//$series_dir = '/media/seagate/Videos/Series/';
 $series_dir = './series/';
 
 $movies_dir = './movies/';
@@ -10,7 +7,7 @@ $movies_dir = './movies/';
 $music_dir = './music/';
 
 $manual_sort = './manual_sort/';
-//$scanning_dir = '/media/seagate/Downloads/ToMove/';
+
 $scanning_dir = './files_to_move/';
 
 $video_match = array('mkv', 'avi', 'mp4');
