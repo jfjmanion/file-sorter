@@ -35,10 +35,10 @@ class audioFile
     $this->tracknumber = (!empty($tracknumber)) ? $tracknumber : $ThisFileInfo['comments']['track'][0];
     $this->tracknumber = sprintf('%02d', $this->tracknumber);
 
-    $this->artist = ucwords(strtolower($ThisFileInfo['comments']['artist'][0]);
+    $this->artist = ucwords(strtolower($ThisFileInfo['comments']['artist'][0]));
     $this->album_year = $ThisFileInfo['comments']['year'][0];
-    $this->album = ucwords(strtolower($ThisFileInfo['comments']['album'][0]);
-    $this->title = ucwords(strtolower($ThisFileInfo['comments']['title'][0]);
+    $this->album = ucwords(strtolower($ThisFileInfo['comments']['album'][0]));
+    $this->title = ucwords(strtolower($ThisFileInfo['comments']['title'][0]));
 
     unset($ThisFileInfo);
 
