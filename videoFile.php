@@ -43,7 +43,7 @@ class videoFile
         $result = preg_match('/(.*?).S[0-9]{1,2}E[0-9]{1,2}/i', $this->filename, $matches);
 
         $this->series_slug  = $matches[1];
-        $this->series_name = implode(" ", explode('.', $this->series_slug));
+        $this->series_name = ucwords(strtolower(implode(" ", explode('.', $this->series_slug))));
 
         $getID3 = new getID3;
         $ThisFileInfo = $getID3->analyze($filepath);
