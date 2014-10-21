@@ -20,6 +20,6 @@ $debug = true;
 
 $prod = true;
 
-$lock_file = "./lock";
+$lock_file = $scanning_dir . "lock";
 
 $ignore_files = array('txt', 'nfo', 'jpg', 'DS_Store', 'm3u', 'log');

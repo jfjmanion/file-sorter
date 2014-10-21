@@ -33,6 +33,7 @@ class audioFile
 
     $tracknumber = $ThisFileInfo['comments']['tracknumber'][0];
     $this->tracknumber = (!empty($tracknumber)) ? $tracknumber : $ThisFileInfo['comments']['track'][0];
+    $this->tracknumber = sprintf('%02d', $this->tracknumber);
 
     $this->artist = $ThisFileInfo['comments']['artist'][0];
     $this->album_year = $ThisFileInfo['comments']['year'][0];
