@@ -19,3 +19,4 @@ movies/
 composer.lock
 *.sh
 config.php
+composer.phar
