@@ -65,7 +65,15 @@ class videoFile
         $this->video_quality =  $ThisFileInfo['video']['resolution_y'];
         break;
       }
+      $getID3 = new getID3;
+      $ThisFileInfo = $getID3->analyze($filepath);
+      $this->video_quality =  $ThisFileInfo['video']['resolution_y'];
     }
+    //its a movie if its longer than 70 minutes
+    if ((int) $ThisFileInfo["playtime_seconds"] > 4200){
+      $this->is_series = false;
+    }
+
   }
 
   public function get_video_quality(){
