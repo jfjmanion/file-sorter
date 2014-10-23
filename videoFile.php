@@ -14,7 +14,7 @@ class videoFile
 
   private $series_slug;
 
-  private $is_series = true;
+  private $is_series = false;
 
   private $file_extension;
 
@@ -27,29 +27,39 @@ class videoFile
     $pathinfo = pathinfo($filepath);
     $this->file_location = $pathinfo['dirname'] . "/";
     $this->file_name_only = $pathinfo['filename'];
-    $this->filename = $pathinfo['filename'] . "." . $pathinfo['extension'];
-    //in case the file has spaces instead of periods
-    $fixed_filename = str_replace(" ", ".", $pathinfo['filename'] . "." . $pathinfo['extension']);
     $this->file_extension = $pathinfo['extension'];
+    $this->filename = $this->file_name_only . "." . $this->file_extension;
+    //replace all unscannable characters
+    $fixed_filename = $this->filename;
 
-    $result = preg_match('.S[0-9]{1,2}E([0-9]{1,2}).', $fixed_filename, $matches);
-    if ($result === 1) {
-        $temp = explode('E', $matches[0]);
+    $replace = array('- ', '-', '[', ']');
+    $fixed_filename= str_replace($replace, '',$fixed_filename);
 
-        $this->episode = sprintf('%02d', $temp[1]);
-        $this->season = sprintf('%02d', ltrim($temp[0], 'S'));
+    $replace = array('_', ' ');
+    $fixed_filename= str_replace($replace, '.',$fixed_filename);
 
-        $matches = array();
-        $result = preg_match('/(.*?).S[0-9]{1,2}E[0-9]{1,2}/i', $this->filename, $matches);
+    $pregs = array(
+      '/\.S([0-9]{1,2})E([0-9]{1,2})\./i' =>'/(.*?)\.S[0-9]{1,2}E[0-9]{1,2}/i',
+      '/\.([0-1]?[0-9]){1}([0-9]{2})\./' => '/(.*?)\.[0-9]{1}[0-9]{2}\./',
+      '/\.([0-9]){1}x([0-9]{2})\./i' => '/(.*?)\.[0-9]{1}x[0-9]{2}\./i');
 
-        $this->series_slug  = $matches[1];
+    foreach ($pregs as $search => $get){
+      $matches = array();
+      if ( 1 === preg_match($search, $fixed_filename, $matches)){
+        $this->is_series = true;
+        $this->season = sprintf('%02d', $matches[1]);
+        $this->episode = sprintf('%02d', $matches[2]);
+
+        $series_matches = array();
+        $result = preg_match($get, $fixed_filename, $series_matches);
+        $this->series_slug  = $series_matches[1];
         $this->series_name = ucwords(strtolower(implode(" ", explode('.', $this->series_slug))));
 
         $getID3 = new getID3;
         $ThisFileInfo = $getID3->analyze($filepath);
         $this->video_quality =  $ThisFileInfo['video']['resolution_y'];
-    } else {
-      $this->is_series = false;
+        break;
+      }
     }
   }
 
