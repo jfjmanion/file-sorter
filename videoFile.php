@@ -52,8 +52,8 @@ class videoFile
 
         $series_matches = array();
         $result = preg_match($get, $fixed_filename, $series_matches);
-        $this->series_slug  = trim($series_matches[1]);
-        $this->series_name = ucwords(strtolower(implode(" ", explode('.', $this->series_slug))));
+        $this->series_slug  = $series_matches[1];
+        $this->series_name = trim(ucwords(strtolower(implode(" ", explode('.', $this->series_slug)))));
 
         $getID3 = new getID3;
         $ThisFileInfo = $getID3->analyze($filepath);
