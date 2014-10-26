@@ -81,7 +81,13 @@ foreach ($audios as $audio){
   $tracknumber = (!empty($tracknumber)) ? $tracknumber . " - " : "";
 
   $directory = $music_dir . $artist . $album;
-  $filename = $tracknumber . $audio->getTitle() . "." . $audio->getExtension();
+
+  //make sure a title exists, otherwise will have no idea what it is
+  if ($audio->getTitle()  !== ""){
+    $filename = $tracknumber . $audio->getTitle() . "." . $audio->getExtension();
+  } else {
+    $filename = $audio->getFileName();
+  }
   $new_location = $directory . $filename;
 
   if ($prod && !file_exists($lock_file)){
@@ -125,7 +131,7 @@ foreach ($others as $other){
 $directories = array_reverse($directories);
 foreach($directories as $directory){
   if ($debug) {
-    echo "Directory to delete: " . $directory . $line_seperator;
+    echo "Directory to delete: " . $directory . $line_seperator . $line_seperator;
   }
 
   if ($prod && $lock_flag === false){

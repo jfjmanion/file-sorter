@@ -32,7 +32,7 @@ class videoFile
     //replace all unscannable characters
     $fixed_filename = $this->filename;
 
-    $replace = array('[', ']');
+    $replace = array('[', ']', ")", "(");
     $fixed_filename= str_replace($replace, '',$fixed_filename);
 
     $replace = array('_', ' ', '-');
