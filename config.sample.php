@@ -10,7 +10,7 @@ $manual_sort = './manual_sort/';
 
 $scanning_dir = './files_to_move/';
 
-$video_match = array('mkv', 'avi', 'mp4');
+$video_match = array('wmv', 'mkv', 'avi', 'mp4','mpg','m4v','rmvb');
 
 $audio_match = array('m4a', 'mp3', 'flac', 'wma');
 

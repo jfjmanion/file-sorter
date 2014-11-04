@@ -10,6 +10,11 @@ if (php_sapi_name() == 'cli'){
   $line_seperator = "\n\r";
 }
 
+echo "Script ran at: " . date('Y-m-d H:i:s') . $line_seperator;
+if (file_exists($lock_file)){
+ exit('Lock File Exists');
+}
+
 $videos = array();
 $audios = array();
 $others = array();
@@ -20,6 +25,7 @@ $lock_flag = false;
 $objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($scanning_dir), RecursiveIteratorIterator::SELF_FIRST);
 foreach($objects as $name => $object){
     $pathinfo = pathinfo($name);
+    $pathinfo['extension'] = strtolower($pathinfo['extension']);
     if (in_array($pathinfo['extension'], $video_match) && strpos($pathinfo['filename'], 'sample') === false ){
       $videos[] = new videoFile($name);
     } else if (in_array($pathinfo['extension'], $audio_match)) {
@@ -72,11 +78,11 @@ foreach ($videos as $video){
 foreach ($audios as $audio){
 
   $artist = $audio->getArtist();
-  $artist = (!empty($artist)) ? $artist . "/" : "";
+  $artist = (!empty($artist)) ? $artist . "/" : "various-artist/";
   $year = $audio->getAlbumYear();
   $year = (!empty($year)) ? " (" . $year . ")" : "";
   $album = $audio->getAlbum();
-  $album = (!empty($album)) ? $album . $year . "/" : "";
+  $album = (!empty($album)) ? $album . $year . "/" : "default/";
   $tracknumber = $audio->getTrackNumber();
   $tracknumber = (!empty($tracknumber)) ? $tracknumber . " - " : "";
 
