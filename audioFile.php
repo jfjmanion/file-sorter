@@ -1,77 +1,147 @@
 <?php
+
+/**
+ * Class audioFile
+ */
 class audioFile
 {
 
-  private $title;
+    /**
+     * @var string Title of the song
+     */
+    private $title;
 
-  private $album;
+    /**
+     * @var string The songs Album
+     */
+    private $album;
 
-  private $album_year;
+    /**
+     * @var int The Album year
+     */
+    private $albumYear;
 
-  private $artist;
+    /**
+     * @var string The track's artist
+     */
+    private $artist;
 
-  private $file_location;
+    /**
+     * @var string The location of the file
+     */
+    private $fileLocation;
 
-  private $filename;
+    /**
+     * @var string The filename
+     */
+    private $filename;
 
-  private $file_extension;
+    /**
+     * @var string The file extension
+     */
+    private $fileExtension;
 
-  private $tracknumber;
+    /**
+     * @var string The track number on the album
+     */
+    private $trackNumber;
 
-  public function __construct ($filepath){
-    $pathinfo = pathinfo($filepath);
-    $this->file_location = $pathinfo['dirname'] . "/";
-    $this->filename = $pathinfo['filename'] . "." . $pathinfo['extension'];
-    $this->file_extension = $pathinfo['extension'];
+    /**
+     * audioFile constructor.
+     * @param $filePath string The location of the file
+     */
+    public function __construct($filePath)
+    {
+        $pathInfo = pathinfo($filePath);
+        $this->fileLocation = $pathInfo['dirname'] . '/';
+        $this->filename = $pathInfo['filename'] . '.' . $pathInfo['extension'];
+        $this->fileExtension = $pathInfo['extension'];
 
-    $getID3 = new getID3;
-    $ThisFileInfo = $getID3->analyze($filepath);
-    getid3_lib::CopyTagsToComments($ThisFileInfo);
+        $getID3 = new getID3;
+        $thisFileInfo = $getID3->analyze($filePath);
+        getid3_lib::CopyTagsToComments($thisFileInfo);
 
-    $audio_pathinfo = pathinfo($audio);
-    $extension = $audio_pathinfo['extension'];
+        $trackNumber = $thisFileInfo['comments']['tracknumber'][0];
+        $this->trackNumber = !empty($trackNumber) ? $trackNumber : $thisFileInfo['comments']['track'][0];
+        $this->trackNumber = sprintf('%02d', $this->trackNumber);
 
-    $tracknumber = $ThisFileInfo['comments']['tracknumber'][0];
-    $this->tracknumber = (!empty($tracknumber)) ? $tracknumber : $ThisFileInfo['comments']['track'][0];
-    $this->tracknumber = sprintf('%02d', $this->tracknumber);
+        $this->artist = ucwords(strtolower($thisFileInfo['comments']['artist'][0]));
+        $this->albumYear = $thisFileInfo['comments']['year'][0];
+        $this->album = ucwords(strtolower($thisFileInfo['comments']['album'][0]));
+        $this->title = ucwords(strtolower($thisFileInfo['comments']['title'][0]));
 
-    $this->artist = ucwords(strtolower($ThisFileInfo['comments']['artist'][0]));
-    $this->album_year = $ThisFileInfo['comments']['year'][0];
-    $this->album = ucwords(strtolower($ThisFileInfo['comments']['album'][0]));
-    $this->title = ucwords(strtolower($ThisFileInfo['comments']['title'][0]));
+        unset($thisFileInfo);
+    }
 
-    unset($ThisFileInfo);
+    /**
+     * Get the artist
+     * @return string The artist
+     */
+    public function getArtist()
+    {
+        return $this->artist;
+    }
 
-  }
+    /**
+     * Get the album year
+     * @return int The album year
+     */
+    public function getAlbumYear()
+    {
+        return $this->albumYear;
+    }
 
-  public function getArtist(){
-    return $this->artist;
-  }
+    /**
+     * Get the album name
+     * @return string The album name
+     */
+    public function getAlbum()
+    {
+        return $this->album;
+    }
 
-  public function getAlbumYear(){
-    return $this->album_year;
-  }
+    /**
+     * Get the file extension
+     * @return string the track's file extension
+     */
+    public function getExtension()
+    {
+        return $this->fileExtension;
+    }
 
-  public function getAlbum(){
-    return $this->album;
-  }
+    /**
+     * Get the file location
+     * @return string The file location
+     */
+    public function getFileLocation()
+    {
+        return $this->fileLocation;
+    }
 
-  public function getExtension(){
-    return $this->file_extension;
-  }
+    /**
+     * Get the file name
+     * @return string The file name
+     */
+    public function getFileName()
+    {
+        return $this->filename;
+    }
 
-  public function getFileLocation(){
-    return $this->file_location;
-  }
-  public function getFileName(){
-    return $this->filename;
-  }
+    /**
+     * Get the song title
+     * @return string The song title 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
-  public function getTitle(){
-    return $this->title;
-  }
-
-  public function getTrackNumber(){
-    return $this->tracknumber;
-  }
+    /**
+     * Get the track number
+     * @return string The track number
+     */
+    public function getTrackNumber()
+    {
+        return $this->trackNumber;
+    }
 }
