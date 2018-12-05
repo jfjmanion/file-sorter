@@ -1,116 +1,205 @@
 <?php
+
+/**
+ * Class videoFile
+ */
 class videoFile
 {
 
-  private $series_name;
+    /**
+     * @var string The series Name
+     */
+    private $seriesName;
 
-  private $season;
+    /**
+     * @var string The season number
+     */
+    private $season;
 
-  private $episode;
+    /**
+     * @var string The episode number
+     */
+    private $episode;
 
-  private $file_location;
+    /**
+     * @var string The file location
+     */
+    private $fileLocation;
 
-  private $filename;
+    /**
+     * @var string The fileName
+     */
+    private $fileName;
 
-  private $series_slug;
+    /**
+     * @var mixed The series slug
+     */
+    private $seriesSlug;
 
-  private $is_series = false;
+    /**
+     * @var bool If the video is part of a series
+     */
+    private $isSeries = false;
 
-  private $file_extension;
+    /**
+     * @var string The video file extension
+     */
+    private $fileExtension;
 
-  private $video_quality;
+    /**
+     * @var int|null The video Quality
+     */
+    private $videoQuality;
 
-  private $file_name_only;
+    /**
+     * @var string The fileName without exten
+     */
+    private $fileNameOnly;
 
-  public function __construct ($filepath){
+    /**
+     * videoFile constructor.
+     * @param $filePath string The location of the video
+     */
+    public function __construct($filePath)
+    {
 
-    $pathinfo = pathinfo($filepath);
-    $this->file_location = $pathinfo['dirname'] . "/";
-    $this->file_name_only = $pathinfo['filename'];
-    $this->file_extension = $pathinfo['extension'];
-    $this->filename = $this->file_name_only . "." . $this->file_extension;
-    //replace all unscannable characters
-    $fixed_filename = $this->filename;
+        $pathInfo = pathinfo($filePath);
+        $this->fileLocation = $pathInfo['dirname'] . '/';
+        $this->fileNameOnly = $pathInfo['fileName'];
+        $this->fileExtension = $pathInfo['extension'];
+        $this->fileName = $this->fileNameOnly . '.' . $this->fileExtension;
+        //replace all un scannible characters
+        $fixedFileName = $this->fileName;
 
-    $replace = array('[', ']', ")", "(");
-    $fixed_filename= str_replace($replace, '',$fixed_filename);
+        $replace = array('[', ']', ')', '(');
+        $fixedFileName = str_replace($replace, '', $fixedFileName);
 
-    $replace = array('_', ' ', '-');
-    $fixed_filename= str_replace($replace, '.',$fixed_filename);
+        $replace = array('_', ' ', '-');
+        $fixedFileName = str_replace($replace, '.', $fixedFileName);
 
-    $pregs = array(
-      '/\.S([0-9]{1,2})E([0-9]{1,2})\./i' =>'/(.*?)\.S[0-9]{1,2}E[0-9]{1,2}/i',
-      '/\.([0-1]?[0-9]){1}([0-9]{2})\./' => '/(.*?)\.[0-9]{1}[0-9]{2}\./',
-      '/\.([0-9]){1}x([0-9]{2})\./i' => '/(.*?)\.[0-9]{1}x[0-9]{2}\./i',
-      '/\.Season\.([0-9]){1,2}\.([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.([0-9]{1,2})/i',
-      '/\.S([0-9]{1,2})\.([0-9]{1,2})\./i' =>'/(.*?)\.S[0-9]{1,2}\.[0-9]{1,2}/i',
-      '/\.Season\.([0-9]){1,2}\.Episode\.([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.Episode\.([0-9]{1,2})/i',
+        $pRegs = array(
+            '/\.S([0-9]{1,2})E([0-9]{1,2})\./i' => '/(.*?)\.S[0-9]{1,2}E[0-9]{1,2}/i',
+            '/\.([0-1]?[0-9]){1}([0-9]{2})\./' => '/(.*?)\.[0-9]{1}[0-9]{2}\./',
+            '/\.([0-9]){1}x([0-9]{2})\./i' => '/(.*?)\.[0-9]{1}x[0-9]{2}\./i',
+            '/\.Season\.([0-9]){1,2}\.([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.([0-9]{1,2})/i',
+            '/\.S([0-9]{1,2})\.([0-9]{1,2})\./i' => '/(.*?)\.S[0-9]{1,2}\.[0-9]{1,2}/i',
+            '/\.Season\.([0-9]){1,2}\.Episode\.([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.Episode\.([0-9]{1,2})/i',
+            '/\.Season\.([0-9]){1,2}\.+([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.+([0-9]{1,2})/i');
 
-      '/\.Season\.([0-9]){1,2}\.+([0-9]{1,2})/i' => '/(.*?)\.Season\.([0-9]){1,2}\.+([0-9]{1,2})/i');
+        foreach ($pRegs as $search => $get) {
+            $matches = array();
+            if (1 === preg_match($search, $fixedFileName, $matches)) {
+                $this->isSeries = true;
+                $this->season = sprintf('%02d', $matches[1]);
+                $this->episode = sprintf('%02d', $matches[2]);
 
-    foreach ($pregs as $search => $get){
-      $matches = array();
-      if ( 1 === preg_match($search, $fixed_filename, $matches)){
-        $this->is_series = true;
-        $this->season = sprintf('%02d', $matches[1]);
-        $this->episode = sprintf('%02d', $matches[2]);
+                $seriesMatches = array();
+                preg_match($get, $fixedFileName, $seriesMatches);
+                $this->seriesSlug = $seriesMatches[1];
+                $this->seriesName = ucwords(strtolower(trim(implode(' ', explode('.', $this->seriesSlug)))));
 
-        $series_matches = array();
-        $result = preg_match($get, $fixed_filename, $series_matches);
-        $this->series_slug  = $series_matches[1];
-        $this->series_name = trim(ucwords(strtolower(implode(" ", explode('.', $this->series_slug)))));
+                $getID3 = new getID3;
+                $ThisFileInfo = $getID3->analyze($filePath);
+                $this->videoQuality = $ThisFileInfo['video']['resolution_y'];
 
-        $getID3 = new getID3;
-        $ThisFileInfo = $getID3->analyze($filepath);
-        $this->video_quality =  $ThisFileInfo['video']['resolution_y'];
-
-        //its a movie if its longer than 70 minutes
-        if ((int) $ThisFileInfo["playtime_seconds"] > 4200){
-          $this->is_series = false;
+                //its a movie if its longer than 70 minutes
+                if ((int)$ThisFileInfo['playtime_seconds'] > 4200) {
+                    $this->isSeries = false;
+                }
+                break;
+            }
         }
-        break;
-      }
+
+
     }
 
+    /**
+     * Get the video quality
+     * @return int|null The video quality
+     */
+    public function getVideoQuality()
+    {
+        return $this->videoQuality;
+    }
 
-  }
+    /**
+     * Get the fileName
+     * @return string
+     */
+    public function getfileName()
+    {
+        return $this->fileName;
+    }
 
-  public function get_video_quality(){
-    return $this->video_quality;
-  }
-  public function get_filename(){
-    return $this->filename;
-  }
+    /**
+     * Get the file location
+     * @return string The file location
+     */
+    public function getFileLocation()
+    {
+        return $this->fileLocation;
+    }
 
-  public function get_file_location(){
-    return $this->file_location;
-  }
+    /**
+     * Get the series name
+     * @return string The series name
+     */
+    public function getSeries()
+    {
+        return $this->seriesName;
+    }
 
-  public function get_series(){
-    return $this->series_name;
-  }
-  public function get_episode(){
-    return $this->episode;
-  }
+    /**
+     * Get the episode
+     * @return string The episode number
+     */
+    public function getEpisode()
+    {
+        return $this->episode;
+    }
 
-  public function get_season(){
-    return $this->season;
-  }
+    /**
+     * Get the season number
+     * @return string The season number
+     */
+    public function getSeason()
+    {
+        return $this->season;
+    }
 
-  public function get_series_slug(){
-    return $this->series_slug;
-  }
+    /**
+     * Get the series slug
+     * @return mixed Get the series Slug
+     */
+    public function getSeriesSlug()
+    {
+        return $this->seriesSlug;
+    }
 
-  public function get_file_extension(){
-    return $this->file_extension;
-  }
+    /**
+     * Get the file extension
+     * @return mixed The file extension
+     */
+    public function getFileExtension()
+    {
+        return $this->fileExtension;
+    }
 
-  public function is_series(){
-    return $this->is_series;
-  }
+    /**
+     * Is the video part of a series
+     * @return bool Is the video part of a series
+     */
+    public function isSeries()
+    {
+        return $this->isSeries;
+    }
 
-  public function get_file_name_only(){
-    return $this->file_name_only;
-  }
-
+    /**
+     * Get the fileName without the extension
+     * @return mixed The fileName without extension
+     */
+    public function getfileNameOnly()
+    {
+        return $this->fileNameOnly;
+    }
 }
