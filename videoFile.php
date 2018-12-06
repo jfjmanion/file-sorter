@@ -65,7 +65,7 @@ class videoFile
 
         $pathInfo = pathinfo($filePath);
         $this->fileLocation = $pathInfo['dirname'] . '/';
-        $this->fileNameOnly = $pathInfo['fileName'];
+        $this->fileNameOnly = $pathInfo['filename'];
         $this->fileExtension = $pathInfo['extension'];
         $this->fileName = $this->fileNameOnly . '.' . $this->fileExtension;
         //replace all un scannible characters

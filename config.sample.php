@@ -1,25 +1,33 @@
 <?php
 
-$series_dir = './series/';
+class Config {
+	
+	public $seriesDir = './series/';
 
-$movies_dir = './movies/';
+	public $moviesDir = './movies/';
 
-$music_dir = './music/';
+	public $musicDir = './music/';
 
-$manual_sort = './manual_sort/';
+	public $manualSort = './manual_sort/';
 
-$scanning_dir = './files_to_move/';
+	public $scanningDir;
 
-$video_match = array('wmv', 'mkv', 'avi', 'mp4','mpg','m4v','rmvb');
+	public $videoMatch = array('wmv', 'mkv', 'avi', 'mp4','mpg','m4v','rmvb');
 
-$audio_match = array('m4a', 'mp3', 'flac', 'wma');
+	public $audioMatch = array('m4a', 'mp3', 'flac', 'wma');
 
-$permissions = 0777;
+	public $permissions = 0777;
 
-$debug = true;
+	public $debug = true;
 
-$prod = true;
+	public $prod = true;
 
-$lock_file = $scanning_dir . "lock";
+	public $lockFile;
 
-$ignore_files = array('txt', 'nfo', 'jpg', 'DS_Store', 'm3u', 'log');
+	public $ignoreFiles = array('txt', 'nfo', 'jpg', 'DS_Store', 'm3u', 'log');
+
+	public function __construct() {
+		$this->scanningDir = dirname(__FILE__) . '/files_to_move';
+		$this->lockFile = $this->scanningDir . "lock";	
+	}
+}

@@ -44,7 +44,7 @@ class audioFile
     /**
      * @var string The track number on the album
      */
-    private $trackNumber;
+    private $trackNumber = 0;
 
     /**
      * audioFile constructor.
@@ -61,9 +61,11 @@ class audioFile
         $thisFileInfo = $getID3->analyze($filePath);
         getid3_lib::CopyTagsToComments($thisFileInfo);
 
-        $trackNumber = $thisFileInfo['comments']['tracknumber'][0];
-        $this->trackNumber = !empty($trackNumber) ? $trackNumber : $thisFileInfo['comments']['track'][0];
-        $this->trackNumber = sprintf('%02d', $this->trackNumber);
+        if (isset($thisFileInfo['comments']['tracknumber'])) {
+        	$trackNumber = $thisFileInfo['comments']['tracknumber'][0];
+        	$this->trackNumber = !empty($trackNumber) ? $trackNumber : $thisFileInfo['comments']['track'][0];
+        	$this->trackNumber = sprintf('%02d', $this->trackNumber);
+    	}
 
         $this->artist = ucwords(strtolower($thisFileInfo['comments']['artist'][0]));
         $this->albumYear = $thisFileInfo['comments']['year'][0];
