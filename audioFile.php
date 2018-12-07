@@ -60,9 +60,9 @@ class audioFile
         $getID3 = new getID3;
         $thisFileInfo = $getID3->analyze($filePath);
         getid3_lib::CopyTagsToComments($thisFileInfo);
-
-        if (isset($thisFileInfo['comments']['tracknumber'])) {
-        	$trackNumber = $thisFileInfo['comments']['tracknumber'][0];
+        
+        if (array_key_exists('track_number', $thisFileInfo['comments'])) {
+        	$trackNumber = $thisFileInfo['comments']['track_number'][0];
         	$this->trackNumber = !empty($trackNumber) ? $trackNumber : $thisFileInfo['comments']['track'][0];
         	$this->trackNumber = sprintf('%02d', $this->trackNumber);
     	}
