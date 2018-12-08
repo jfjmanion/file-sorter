@@ -123,7 +123,7 @@ class MainProgram
 		}
 
 		$archiveFiles = [];
-		foreach ($others as $other){
+		foreach ($others as $other) {
 		  $copyFile = false;	
 			
 		  //move them into an new "Other to sort" folder
@@ -135,7 +135,14 @@ class MainProgram
 					$entry = rar_entry_get($rarFile, $file->getName());
 					$entry->extract($config->scanningDir); // extract to the current dir
 					$archiveFiles[$pathinfo['filename']]['extracted'] = true;
+					//@todo - make sure the same 'files' aren't added twice (otherwise there will be a notice)
 					$archiveFiles[$pathinfo['filename']]['files'][] = $other; 
+				}
+
+				//if the rar file still exists after extraction, remove it later - multi part rar files fall into this
+				if (file_exists($other)){
+					$archiveFiles[$pathinfo['filename']]['extracted'] = true;	
+					$archiveFiles[$pathinfo['filename']]['files'][] = $other;
 				}
 				if ($config->debug){
 					echo "UnRared File: " . $other . $lineSeperator;
@@ -169,7 +176,6 @@ class MainProgram
 				}
 			}
 		}
-
 		
 		//====Cleanup====//
 
