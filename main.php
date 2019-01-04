@@ -74,7 +74,7 @@ class MainProgram
 		  if ($config->prod && !file_exists($config->lockFile)){
 			//if it already exists, just delete it
 			if (!file_exists($videoLocation)) {
-			  @mkdir($directory, $permissions, true);
+			  @mkdir($directory, $config->permissions, true);
 			    rename($video->getFileLocation().$video->getFilename(), $videoLocation);
 			} else {
 			    unlink($video->getFileLocation().$video->getFilename());
@@ -107,7 +107,7 @@ class MainProgram
 
 		  if ($config->prod && !file_exists($config->lockFile)) {
 			if (!file_exists($newLocation)) {
-			  @mkdir($directory, $permissions, true);
+			  @mkdir($directory, $config->permissions, true);
 			    rename($audio->getFileLocation().$audio->getFileName(), $newLocation);
 			} else {
 			    unlink($audio->getFileLocation() . $audio->getFileName());
