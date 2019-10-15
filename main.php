@@ -78,6 +78,7 @@ class MainProgram
 			if (!file_exists($videoLocation)) {
 			  @mkdir($directory, $config->permissions, true);
 			    rename($video->getFileLocation().$video->getFilename(), $videoLocation);
+				chmod($videoLocation, $config->permissions);
 			} else {
 			    unlink($video->getFileLocation().$video->getFilename());
 			}
@@ -111,6 +112,7 @@ class MainProgram
 			if (!file_exists($newLocation)) {
 			  @mkdir($directory, $config->permissions, true);
 			    rename($audio->getFileLocation().$audio->getFileName(), $newLocation);
+				chmod($newLocation, $config->permissions);
 			} else {
 			    unlink($audio->getFileLocation() . $audio->getFileName());
 			}
@@ -168,6 +170,7 @@ class MainProgram
 					//if its a sample or the extension is ignore, just remove it
 					if (!in_array($pathinfo['extension'], $config->ignoreFiles) && strpos($pathinfo['filename'], 'sample') === false) {
 						rename($other, $config->manualSort . $pathinfo['filename'] . "." . $pathinfo['extension']);
+						chmod($config->manualSort . $pathinfo['filename'] . "." . $pathinfo['extension'], $config->permissions);
 					} else {
 						unlink($other);
 					}
