@@ -2,7 +2,9 @@
 class MainProgram
 {
 	public function run($config) {
-
+		
+		$old_umask = umask(0);
+		
 		$lineSeperator = "<br>";
 		if (php_sapi_name() == 'cli') {
 		  $lineSeperator = "\n\r";
@@ -76,7 +78,6 @@ class MainProgram
 			if (!file_exists($videoLocation)) {
 			  @mkdir($directory, $config->permissions, true);
 			    rename($video->getFileLocation().$video->getFilename(), $videoLocation);
-				chmod($videoLocation, $config->permissions);
 			} else {
 			    unlink($video->getFileLocation().$video->getFilename());
 			}
@@ -110,7 +111,6 @@ class MainProgram
 			if (!file_exists($newLocation)) {
 			  @mkdir($directory, $config->permissions, true);
 			    rename($audio->getFileLocation().$audio->getFileName(), $newLocation);
-				chmod($newLocation, $config->permissions);
 			} else {
 			    unlink($audio->getFileLocation() . $audio->getFileName());
 			}
@@ -207,5 +207,6 @@ class MainProgram
 		  }
 
 		}
+		umask($old_umask);
 	}
 }
